@@ -18,4 +18,14 @@ public class SubstitutionTest {
         );
     }
 
+    @Test
+    void testSideEffectWithoutReassignment() {
+        // side effect: substitution broken
+        // the two calls to sideEffectWithoutReassignment are not equivalent
+        assertNotEquals(
+            Substitution.sideEffectWithoutReassignment(), 
+            Substitution.sideEffectWithoutReassignment()
+        );
+    }
+
 }

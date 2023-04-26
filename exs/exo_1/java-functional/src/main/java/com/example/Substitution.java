@@ -13,4 +13,9 @@ public class Substitution {
         sideEffect += 1;
         return a + b + sideEffect;
     }
+
+    public static double sideEffectWithoutReassignment() {
+        // random number 
+        return Math.random();
+    }
 }
