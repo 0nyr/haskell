@@ -108,4 +108,39 @@ class AppTest {
         String expectedConcat = "";
         assertEquals(expectedConcat, App.reduceRecGeneric(concat, "", Arrays.asList()));
     }
+
+    @Test
+    void testNegativeLambda() {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
+
+        int totalAge0 = App.reduceRecGeneric(
+            (acc, num) -> acc - num, // BiFunction that takes an accumulator and a person and returns the new accumulator
+            0,
+            numbers
+        );
+
+        int totalAge1 = App.reduceRec(
+            (acc, num) -> acc - num, // BiFunction that takes an accumulator and a person and returns the new accumulator
+            0,
+            numbers
+        );
+
+        int totalAge2 = App.reduce(
+            (acc, num) -> acc - num, // BiFunction that takes an accumulator and a person and returns the new accumulator
+            0,
+            numbers
+        );
+
+        int totalAge3 = App.reduceGeneric(
+            (acc, num) -> acc - num, // BiFunction that takes an accumulator and a person and returns the new accumulator
+            0,
+            numbers
+        );
+
+        assertEquals(-10, totalAge0);
+        assertEquals(-10, totalAge1);
+        assertEquals(-10, totalAge2);
+        assertEquals(-10, totalAge3);
+    }
+
 }

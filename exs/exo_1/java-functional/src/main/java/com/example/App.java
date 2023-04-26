@@ -49,9 +49,19 @@ public class App
         if (list.isEmpty()) {
             return init;
         } else {
+            // WARN: for - operator, here is the order of calls needed
+            // ex_list = [1, 2, 3, 4]
+            // call stack:
+            // DONT DO THIS:    f(1, f(2, f(3, f(4, init))))
+            //  (1 - (2 - (3 - (4 - init)))) = -2               (WRONG)
+            // DO THIS:         f(f(f(f(init, 4), 3), 2), 1)
+            //  (((init - 4) - 3) - 2) - 1 = -10                (CORRECT)
+            // OTHER CORRECT:   f(f(f(f(init, 1), 2), 3), 4)
+            //  (((init - 1) - 2) - 3) - 4 = -10                (CORRECT)        
+
             return f.apply(
-                list.get(0), 
-                reduceRec(f, init, list.subList(1, list.size()))
+                reduceRec(f, init, list.subList(0, list.size() - 1)),
+                list.get(list.size() - 1) // last element
             );
         }
 
@@ -79,15 +89,12 @@ public class App
         if (list.isEmpty()) {
             return init;
         } else {
-            if (list.isEmpty()) {
-                return init;
-            } else {
-                B newInit = f.apply(init, list.get(0));
-                return reduceRecGeneric(f, newInit, list.subList(1, list.size()));
-            }
+            return f.apply(
+                reduceRecGeneric(f, init, list.subList(0, list.size() - 1)), 
+                list.get(list.size() - 1)
+            );
         }
     }
-
 
     public static void main(String[] args) {
         List<Person> people = Arrays.asList(
