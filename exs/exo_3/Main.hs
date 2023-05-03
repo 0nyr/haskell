@@ -60,8 +60,8 @@ main = do
 
     -- run the test cases and print the results
     putStrLn "\n-- Test results --"
-    let testResults = runTestTT tests
-        (Counts cases successes failures) = cases testResults
-    putStrLn $ "Total test cases: " ++ show cases
-    putStrLn $ "Test cases succeeded: " ++ show successes
-    putStrLn $ "Test cases failed: " ++ show failures
+    testResults <- runTestTT tests
+    print testResults
+
+    
+
