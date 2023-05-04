@@ -29,11 +29,11 @@ main = do
     putStrLn "Short list, ends at maxbound of fixed size 64bits integer: [0,1152921504606846976,2305843009213693952,3458764513820540928,4611686018427387904,5764607523034234880,6917529027641081856,8070450532247928832]"
 
     putStr "(f) [0::Int,2^63 ..]: "
-    -- print [0::Int,2^63 ..]
+    -- print [0::Int,2^63 ..] -- NB: 2^63 is the sign, so here it will be negative
     putStrLn "2 values list, first 0, then ends at maxbound of fixed size 64bits integer: [0, -9223372036854775808]"
 
     putStr "(g) [0::Int,2^64 ..]: "
-    -- print [0::Int,2^64 ..]
+    -- print [0::Int,2^64 ..] --NB: on 64 bits, 2^64 is actually 0, the 1 is on the 65th bit which does not exists.
     putStrLn "Infinite list of fixed size 64bits integer (infite number of 0), with a step of 2^64 (never reaches maxBound)"
 
     -- maxBound of type Double

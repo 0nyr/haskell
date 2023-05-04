@@ -13,6 +13,7 @@ interface MyBiFunction<A,B, R> extends Function<A, Function<B,R>> {
     // default Function<B,R> apply(A a) {
     //     return apply(a);
     // }
+    Function <B,R> apply(A a); // user needs to define the unary function
 
     default R apply(A a, B b) {
         return this.apply(a).apply(b);
