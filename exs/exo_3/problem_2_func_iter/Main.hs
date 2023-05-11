@@ -8,7 +8,26 @@ nTimes n f
     | not lastIter = nTimes (n - 1) f.f -- composition of f (call f on f)
     -- stop to 1, otherwise, one time too much:
     -- ex on nTimes 5 F: 5 F -> 4 FF -> 3 FFF -> 2 FFFF -> 1 FFFFF -> 0 FFFFFF -> FFFFFF
-    where lastIter = n == 1  
+    where lastIter = n == 1
+
+nTimesCorrection :: Int -> (a -> a) -> (a -> a)
+--nTimesCorrection :: Int -> ((a, a) -> (a, a)) -- similar, think about partially applied functions
+nTimesCorrection 0 _ = id -- identity function
+--nTimesCorrection 1 f = f      -- not necessary
+--nTimesCorrection 2 f = f.f    -- not necessary   
+nTimesCorrection n f
+    | n >= 0 = f . nTimesCorrection (n - 1) f -- WARN: nTimesCorrection (n - 1) (f.f) is wrong !!!
+    | otherwise = error "nTimesCorrection: n must not be negative."
+-- understand that  "nTimes (n - 1) f.f" is actually same as  "(nTimes (n - 1) f).f" !!!
+
+nTimesCorrection2 :: Int -> (a -> a) -> (a -> a)
+nTimesCorrection2 n f
+    | n >= 0 = nT n -- nT is a helper functior for recursion
+    | otherwise = error "nTimesCorrection2: n must not be negative."
+    where
+        -- no need to put f as input !!!
+        nT 0 = id
+        nT k = f . nT (k - 1)
 
 mul2 :: Num a => a -> a
 mul2 x = x * 2

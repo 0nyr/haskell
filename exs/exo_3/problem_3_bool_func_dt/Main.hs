@@ -1,4 +1,5 @@
 module Main where
+import Data.Bool (bool)
 
 data BoolFunction = BF { numberArgs::Int, fn::[Bool]->Bool }
 
@@ -33,6 +34,14 @@ generateBoolCombinationLists n =
     in appendBool True precedingRes ++ appendBool False precedingRes
 
 
+-- correction
+boolCombs :: Int -> [[Bool]]
+boolCombs 0 = [[]]
+--boolCombs 1 = [[False], [True]]
+boolCombs n = [False : b | b <- bsc] ++ [True : b | b <- bsc]
+    where
+        bsc = boolCombs (n - 1)
+
 isSatisfiable :: BoolFunction -> Maybe [Bool]
 isSatisfiable (BF {numberArgs=0, fn=fn})
     | res = Just []
@@ -61,6 +70,12 @@ isSatisfiable (BF {numberArgs=n, fn=fn})
 --             [] -> Nothing
 --             _ -> Just (head listOfRes) -- return just first case solution
 
+-- correction
+isSatisfiableCorrection :: BoolFunction -> Maybe [Bool]
+isSatisfiableCorrection (BF {numberArgs=nA, fn=f}) = 
+    case [b | b <- boolCombs nA, f b] of
+        [] -> Nothing
+        (x:xs) -> Just x
 
 g :: [Bool] -> Bool
 g [x, y] = x && not y

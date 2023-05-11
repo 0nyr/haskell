@@ -17,6 +17,29 @@ facs n =
 facsInGoodOrder :: Integer -> [Integer]
 facsInGoodOrder n = reverse (facs n) -- reverse is the efficient way of reversing list
 
+
+facsCorrection :: Integer -> [Integer]
+facsCorrection 0 = [1]
+facsCorrection n = facs (n - 1) ++ [ factorial n ]
+    where
+        factorial 0 = 1
+        factorial k = k * factorial (k - 1)
+
+facsCorrectionNoRecursion :: Integer -> [Integer]
+facsCorrectionNoRecursion 0 = [1]
+facsCorrectionNoRecursion n = [ factorial i | i <- [0..n]]
+    where   
+        factorial 0 = 1
+        factorial k = k * factorial (k - 1)
+
+facsCorrectionMap :: Integer -> [Integer]
+facsCorrectionMap 0 = [1]
+facsCorrectionMap n =
+    map factorial [0..n]
+    where   
+        factorial 0 = 1
+        factorial k = k * factorial (k - 1)
+
 -- Q: c)
 genList :: (Integer->a) -> Integer -> [a]
 genList f 0 = [f 0]
@@ -24,6 +47,13 @@ genList f n = f n : genList f (n - 1)
 
 genListGoodOrder :: (Integer->a) -> Integer -> [a]
 genListGoodOrder f n = reverse (genList f n)
+
+genListCorrection :: (Integer->a) -> Integer -> [a]
+genListCorrection f n = map f [0..n-1]
+
+genListCorrection2 :: (Integer->a) -> Integer -> [a]
+genListCorrection2 f n = [f i | i <- [0..n]]
+
 
 -- Q: d)
 iterList :: (a -> a) -> a -> Integer -> [a]
@@ -44,7 +74,12 @@ isPrime n =
     in
         length [ divider | divider <- [1 .. round (sqrt (fromIntegral n :: Float))], computeRemainder n divider == 0] == 1
 
-
+isPrimeCorrection :: Integer -> Bool
+isPrimeCorrection n = n >=2 && null [d | d <- twoToSqrtN, mod n d == 0]
+    where
+        -- bad: twoToSqrtN = floor (sqrt (fromIntgral n :: Float))
+        -- a bit better: twoToSqrtN = [i | i <- [2..n - 1], i*i <= n]
+        twoToSqrtN = takeWhile (\i -> i*i <= n) [2..n - 1] -- best: using takewhile to stop the list after the condition is false
 
 main :: IO ()
 main = do

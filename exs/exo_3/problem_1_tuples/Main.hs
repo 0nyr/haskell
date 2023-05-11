@@ -8,6 +8,10 @@ ascendingSort2 a b
     | not aIsGreater = (a, b)
     where aIsGreater = a > b
 
+ascendingSort2Correction :: Ord a => a -> a -> (a, a)
+ascendingSort2Correction x y
+    | x < y = (x, y)
+    | otherwise = (y, x)
 
 -- return a tuple ordered in ascending order
 ascendingSort3 :: Ord a => a -> a -> a -> (a, a, a)
@@ -27,6 +31,22 @@ ascendingSort3 a b c =
         (False, True, False) -> (b, c, a)
         (True, False, False) -> (c, a, b)
         (False, False, False) -> (c, b, a)
+    
+ascendingSort3Correction :: Ord a => a -> a -> a -> (a, a, a)
+ascendingSort3Correction x y z =
+    let (k, l) = ascendingSort2 x y -- use patern matching, or function snd (second)
+    in let (m, u) = ascendingSort2 l z -- determine max, u
+        in let (s, t) = ascendingSort2 k m -- determine min and intermediate value
+            in (s, t, u)
+
+-- improved correction
+ascendingSort3Correction2 :: Ord a => a -> a -> a -> (a, a, a)
+ascendingSort3Correction2 x y z = (minVal, midVal, maxVal)
+  where 
+    (lowerXY, upperXY) = ascendingSort2 x y
+    (lowerFinal, maxVal) = ascendingSort2 upperXY z
+    (minVal, midVal) = ascendingSort2 lowerXY lowerFinal
+
 
 
 -- test ascendingSort3
