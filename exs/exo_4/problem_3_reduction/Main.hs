@@ -1,5 +1,7 @@
 module Main where
 
+import Debug.Trace
+
 -- a)
 -- In Haskell, you can't place constraints directly on data type 
 -- definitions. The main reason is that the constraint doesn't really 
@@ -45,7 +47,7 @@ takeLast :: (Num a) => Int -> [a] -> [a]
 takeLast n list = drop ((length list) - n) list
 
 
-multiplyPoly :: Num a => Polynomial a -> Polynomial a -> Polynomial a
+multiplyPoly :: (Num a, Show a) => Polynomial a -> Polynomial a -> Polynomial a
 multiplyPoly (Coefs []) (Coefs []) = Coefs []
 multiplyPoly (Coefs coefs) (Coefs []) = Coefs coefs
 multiplyPoly (Coefs []) (Coefs coefs) = Coefs coefs
@@ -55,13 +57,15 @@ multiplyPoly (Coefs coefs1) (Coefs coefs2) =
         maxLen = max (length coefs1) (length coefs2)
         minLen = min (length coefs1) (length coefs2)
         diffLen = maxLen - minLen
-        coefs1goodLen = coefs1 ++ replicate diffLen 0
-        coefs2goodLen = coefs2 ++ replicate diffLen 0
+        -- WARN: It is MANDATORY that the two lists used for computing are of the same size !!!
+        -- otherwise, the 'take' operations will fail !!!
+        coefs1goodLen = if length coefs1 < maxLen then coefs1 ++ replicate diffLen 0 else coefs1
+        coefs2goodLen = if length coefs2 < maxLen then coefs2 ++ replicate diffLen 0 else coefs2
         resLen = maxLen*2 - 1
         computeCoef n
             | n == 0 = zipWith (*) (take 1 coefs1goodLen) (take 1 coefs2goodLen)
             | 0 < n && n < maxLen = zipWith (*) (take (n+1) coefs1goodLen) (reverse (take (n+1) coefs2goodLen))
-            | maxLen <= n && n < resLen = zipWith (*) (takeLast (resLen - n) coefs1goodLen) (reverse (takeLast (resLen - n) coefs2goodLen))
+            | maxLen <= n && n < resLen = trace ("(resLen - n) value: " ++ show (resLen - n)) $ trace ("coefs1goodLen value: " ++ show (coefs1goodLen)) $ trace ("coefs2goodLen value: " ++ show (coefs2goodLen)) $ trace ("zipwith value: " ++ show ((zipWith (*) (takeLast (resLen - n) coefs1goodLen) (take (resLen - n) (reverse coefs2goodLen))))) $ zipWith (*) (takeLast (resLen - n) coefs1goodLen) (take (resLen - n) (reverse coefs2goodLen))
             | otherwise = error "computeCoef: invalid n"
 
 
@@ -84,7 +88,15 @@ main = do
     let poly4 = Coefs [5, 0, 6, 9]
 
     print(takeLast 3 [2, 0, 3, 0])
-    print(takeLast 3 [5, 0, 6, 9])
+    -- print(takeLast 3 (reverse [5, 0, 6, 9]))
+    print(take 3 (reverse [1, 2, 3, 4]))
+    print(take (3) (reverse [5, 0, 6, 9]))
+
+    let (Coefs list3, Coefs list4) = (poly3, poly4) 
+        maxLenTest = max (length list3) (length list4)
+        resLenTest = maxLenTest*2 - 1
+
+    print(zipWith (*) (takeLast (3) [2, 0, 3, 0]) (take (3) (reverse [5, 0, 6, 9])))
 
     putStr "multiplyPoly poly3 poly4 (expect [10, 0, 27, 18, 18, 27, 0]): "
     print (multiplyPoly poly3 poly4)
