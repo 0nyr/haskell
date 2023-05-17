@@ -1,6 +1,7 @@
 module Main where
 
 import Data.List
+import Debug.Trace
 
 myAssert :: Bool -> IO ()
 myAssert True = putStrLn "🟢 assertion ok"
@@ -29,18 +30,29 @@ fTest2 :: (Fractional a, Ord a) => a -> a
 fTest2 x = x^3 + 1 + 3/(max 10 x)
 
 -- c)
-gTestUnfold :: Num b => b -> Maybe (a, b)
-gTestUnfold x 
-    | res < 100 = Just (res, res*res)
+gTestUnfoldShow :: (Num a, Ord a, Show a) => a -> Maybe (a, a)
+gTestUnfoldShow x 
+    | res < 1000 = trace ("x: " ++ show (x)) $ trace ("res: " ++ show (res)) $ Just (res, res)
     | otherwise = Nothing
     where
-        res = (x*3 + 3)
+        res = (x*2 + 3)
 
-fTestFold :: (Num a, Num b) => a -> b -> a
+gTestUnfold :: (Num a, Ord a) => a -> Maybe (a, a)
+gTestUnfold x 
+    | res < 1000 = Just (res, res)
+    | otherwise = Nothing
+    where
+        res = (x*2 + 3)
+
+fTestFold :: Num a => a -> a -> a
 fTestFold a b = a + b - 1
 
--- foldUnfoldr :: Foldable t => (a -> b -> b) -> b -> (b -> Maybe (a, b)) -> b -> a
--- foldUnfoldr f x g y =
+foldUnfoldr :: (a -> b -> b) -> b -> (b -> Maybe (a, b)) -> b -> b
+foldUnfoldr f x g y =
+    case maybe_g_res_tuple of
+        Just (resA, resB) -> foldUnfoldr f (f resA x) g resB
+        Nothing -> x
+    where maybe_g_res_tuple = g y
 
 
 main :: IO ()
@@ -62,9 +74,9 @@ main = do
     let g = gTestUnfold
     
     putStrLn "unfoldr gTestUnfold 0: "
-    print (unfoldr gTestUnfold 0)
+    print (unfoldr g x)
     putStrLn "foldr fTestFold 0 (unfoldr gTestUnfold 0): "
-    print (foldr fTestFold 0 (unfoldr gTestUnfold 0))
+    print (foldr f y (unfoldr g x))
+    -- check in python: sum([3,9,21,45,93,189,381,765]) - len([3,9,21,45,93,189,381,765]) == 1498
 
-    
     myAssert (foldUnfoldr f x g y == foldr f x (unfoldr g x))
