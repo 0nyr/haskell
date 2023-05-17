@@ -6,7 +6,7 @@ import Data.List
 sumAndLenCounter :: (Num a, Num b) => (a, b) -> a -> (a, b)
 sumAndLenCounter (a,counter) b = (a + b, counter + 1)
 
-
+-- CORRECT
 computeSumAndLength :: Fractional a => [a] -> a
 computeSumAndLength [] = error "computeSumAndLength: empty list"
 computeSumAndLength [x] = x
@@ -14,46 +14,28 @@ computeSumAndLength list =
     let (totalSum, len) = foldl sumAndLenCounter (0, 0) list
     in totalSum / len
 
--- correction
-averageCorrection :: Fractional a => [a] -> a
-averageCorrection [] = error "average undefined for empty list"
-averageCorrection xs =
-    let (totalSum, totalLength) = foldl f (0,0) xs
-    in totalSum / fromIntegral totalLength
-    where
-        f (s, counter) x = (s + x, counter + 1)
-
 -- b)
 upLetterIfNeededAndLenCounter :: (Num a) => a -> Char -> (a, Char)
 upLetterIfNeededAndLenCounter counter charVal
     | isLower charVal = (counter + 1, toUpper charVal)
-    | otherwise = (counter + 1, charVal)
+    | otherwise = (counter + 1, charVal)   -- here, counter should not be incremented to count changes only
 
+-- Very good use of mapAccumL!
 -- using mapAccumL :: (a->x->(a,y)) -> a -> [x] -> (a,[y])
 makeUpper :: String -> (Int, String)
 makeUpper listOfChar = 
     (len, resList)
     where (len, resList) = mapAccumL upLetterIfNeededAndLenCounter 0 listOfChar
 
--- corrections
--- bad opti, reads 3 times the list (length, filter, map)
-makeUpperSimpleCorrection :: String -> (Int, String)
-makeUpperSimpleCorrection str = (length(filter isLower str), map toUpper str)
-
-makeUpperCorrectionOpti :: String -> (Int, String)
---makeUpperCorrectionOpti str = foldr f (0, "") str
-makeUpperCorrectionOpti = foldr f (0, "") -- arg 'str' is no necessary
-    where
-        f c (count, s) = if isLower c then (count + 1, toUpper c : s)
-            else (count, c : s)
-
 -- c)
+-- CORRECT
 evalPoly :: Num a => [a] -> a -> a
 evalPoly [] _ = 0
 evalPoly list x = foldr oneMultOneAdd 0 list
     where oneMultOneAdd coef accumulator = coef + (accumulator*x)
 
 -- d)
+-- CORRECT
 -- remove first element of the list (derivation of constant)
 -- second element is conserved (derive x)
 -- third element multiplied by 2 (derive x^2)
@@ -65,14 +47,6 @@ derivePoly [constant] = []
 derivePoly (_:listOfCoefs) = 
     zipWith (*) listOfCoefs arithmeticSeq
     where arithmeticSeq = map fromIntegral [1 .. length listOfCoefs]
-
--- WARN: cannot replace fmult with (*) since (*) needs inputs to be of same type... 
---  and operator .. is not available for all Num.
-derivePolyCorrection :: Num a => [a] -> [a]
-derivePolyCorrection [] = []
-derivePolyCorrection (_:coeffs) = zipWith fmult coeffs [1..length coeffs]
-    where 
-        fmult a b = a * fromIntegral b
 
 main :: IO ()
 main = do

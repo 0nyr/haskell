@@ -2,6 +2,9 @@ module Main where
 
 import Debug.Trace
 
+-- In earlier versions of Haskell "data Num a => Polynomial a = ..." was
+-- possible but that has been removed from the language.
+
 -- a)
 -- In Haskell, you can't place constraints directly on data type 
 -- definitions. The main reason is that the constraint doesn't really 
@@ -11,17 +14,17 @@ import Debug.Trace
 -- constraint on the functions that operate on the data type. This allows 
 -- you to enforce the constraint when the functions are used, not when 
 -- the data is created.
-data Polynomial a = Coefs [a] -- 'Coefs' is constructor function
+data Polynomial a = Coefs [a]
     deriving Show
 
--- 3 + x(2 + x(0 + x(0))) TRICK: here, parenthesis are on right, so use foldr !!!
--- TRICK: foldr has accumulator on the right, foldl has accumulator on the left
+-- CORRECT
 eval :: Num a => Polynomial a -> a -> a
 eval (Coefs []) _ = 0
 eval (Coefs listOfCoefs) x = foldr oneMultOneAdd 0 listOfCoefs
     where oneMultOneAdd coef accumulator = coef + (accumulator*x)
 
 -- b)
+-- CORRECT
 -- 'replicate' function takes an integer n and a value x, 
 -- and returns a list of length n where every element is x
 -- here, since zipWith stops at the shotest list, and since
@@ -37,18 +40,10 @@ addPoly (Coefs coefs1) (Coefs coefs2) =
         maxLen = max (length coefs1) (length coefs2)
         minLen = min (length coefs1) (length coefs2)
         diffLen = maxLen - minLen
-    
-addPolyCorrection :: Num a => Polynomial a -> Polynomial a -> Polynomial a
-addPolyCorrection (Coefs coefsA) (Coefs coefsB) = Coefs(zipWith (+) coefsA' coefsB')
-    where
-        lenA = length coefsA
-        lenB = length coefsB
-        len = max lenA lenB
-        -- better correction, only add 0s to the list that needs it
-        coefsA' = coefsA ++ replicate (len - lenA) 0
-        coefsB' = coefsB ++ replicate (len - lenB) 0
 
 -- c)
+-- CORRECT
+-- (BTW, "negate" can be used instead of (0 -) .)
 negatePoly :: Num a => Polynomial a -> Polynomial a
 negatePoly (Coefs []) = Coefs []
 negatePoly (Coefs listOfCoefs) = Coefs (map (0 - ) listOfCoefs)
@@ -81,6 +76,10 @@ multiplyPolyShow (Coefs coefs1) (Coefs coefs2) =
             -- | maxLen <= n && n < resLen = zipWith (*) (takeLast (resLen - n) coefs1goodLen) (take (resLen - n) (reverse coefs2goodLen))
             | otherwise = error "computeCoef: invalid n"
 
+-- CORRECT
+-- It produces leading zeros but that was not forbidden. We can write it a bit
+-- shorter; see tutorial.
+--
 -- more elegant version
 multiplyPoly :: Num a => Polynomial a -> Polynomial a -> Polynomial a
 multiplyPoly (Coefs coefs1) (Coefs coefs2) =
@@ -103,20 +102,13 @@ multiplyPoly (Coefs coefs1) (Coefs coefs2) =
             | otherwise  = zipWith (*) (takeLast (resLen - n) coefs1goodLen) (take (resLen - n) (reverse coefs2goodLen))
 
 
--- recursive solution 
--- p            * q 
--- (a + b*X)    * q 
--- a*q + X*(b*q)* q 
-mulPolyCorrection :: Num a => Polynomial a -> Polynomial a -> Polynomial a
-mulPolyCorrection (Coefs (a:b)) (Coefs q) = Coefs (map (a*) q) `addPoly` Coefs (0 : coeffs)
-    where
-        Coefs coeffs = (Coefs b) `mulPolyCorrection` (P q)
-
 -- e)
+-- CORRECT
 createConstPoly :: a -> Polynomial a
 createConstPoly constant = Coefs [constant]
 
 -- f)
+-- CORRECT
 createPolyX :: Num a => Polynomial a
 createPolyX = Coefs [0, 1] -- x has coefs 0 + 1.x -> [0, 1]
 
@@ -128,6 +120,8 @@ x = createPolyX
 -- If we were in Rust: we specify implementations of the trait Num to the class Polynomial
 -- In Haskell: we specify that Polynomial a (where a has the class of Num) is an instance of the class Num (i.e. behave as a Num)
 -- NOTE: (-) works automatically when 'negate' is defined
+
+-- CORRECT
 instance (Num a) => Num (Polynomial a) where
     (+), (*)   :: Polynomial a -> Polynomial a -> Polynomial a
     negate  :: Polynomial a -> Polynomial a
