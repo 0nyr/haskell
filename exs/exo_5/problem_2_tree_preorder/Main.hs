@@ -16,8 +16,8 @@ data Tree = E                 -- empty leaf
 
 -- foldTree :: (a->[b]->b) -> Tree a -> b
 -- foldTree f (Node x subtrees) = f x (map (foldTree f) subtrees)
--- foldTree :: (acc -> Char -> acc) -> acc -> (Tree, Tree) -> acc
 
+-- foldTree :: (acc -> Char -> acc) -> acc -> (Tree, Tree) -> acc
 foldTree :: (String -> Char -> String) -> String -> Tree -> String
 foldTree _ accum E = accum
 foldTree f accum (N subtreeL c subtreeR) =
