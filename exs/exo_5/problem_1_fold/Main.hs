@@ -3,6 +3,12 @@ module Main where
 import Data.List
 import Debug.Trace
 
+-- NB: foldr replaces the list constructor by provided operator:
+-- xs = [1, 2, 3, 4]
+--             xs = 1 : (2 : (3 : (4 : [])))
+-- foldr (+) 0 xs = 1 + (2 + (3 + (4 + 0)))
+-- so foldr (:) [] xs just builds xs!
+
 myAssert :: Bool -> IO ()
 myAssert True = putStrLn "🟢 assertion ok"
 myAssert False = putStrLn "🔴 assertion failed"

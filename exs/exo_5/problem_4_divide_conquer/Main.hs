@@ -64,6 +64,34 @@ mergesort list = dc p b d c list
                         (b:lb) = listR
 
 
+mergesortCorr ::forall a. Ord a => [a] -> [a]
+mergesortCorr = 
+    let
+        isSolvable :: [a] -> Bool
+        isSolvable a = length a <= 1 -- better use patternmatching (avoid the parcours of all the list)
+        
+        --solvable :: [a] -> [a]
+        --solvable a = a
+        solvable = id
+
+        divide :: [a] -> [[a]]
+        divide list =
+            let half_size = fromIntegral (length list) / 2 -- WARN : don't forget the fromIntegral
+            in [take (floor half_size) list, drop (floor half_size) list] -- you can use the split fct
+
+        mergeSorted :: (Ord a) => [a] -> [a] -> [a]
+        mergeSorted left [] = left
+        mergeSorted [] right = right
+        mergeSorted (left:leftTail) (right:rightTail) 
+            | leftHigher = right : mergeSorted (left : leftTail) rightTail
+            | not leftHigher = left : mergeSorted leftTail (right : rightTail)
+            where leftHigher = left > right
+
+        conquer :: b -> [[a]] -> [a] -- the first params is the original prob
+        conquer _ (l:r:_) = mergeSorted l r
+        conquer _ _ = error "wrong used of conquer"
+    in dc isSolvable solvable divide conquer
+
 
 myAssert :: Bool -> IO ()
 myAssert True = putStrLn "🟢 assertion ok"

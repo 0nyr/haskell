@@ -61,6 +61,7 @@ mapBTree f (Node treeL x treeR) =
     Node (mapBTree f treeL) (f x) (mapBTree f treeR)
 
 -- b)
+-- 2 input functions because the BTree has 2 constructors.
 foldBTree :: (acc -> a -> acc) -> (acc -> a -> acc) -> acc -> BTree a -> acc
 foldBTree fNode fLeaf accum (Leaf x) = fLeaf accum x
 foldBTree fNode fLeaf accum (Node treeL x treeR) =
@@ -68,6 +69,12 @@ foldBTree fNode fLeaf accum (Node treeL x treeR) =
     where
         -- start left side
         accumL = foldBTree fNode fLeaf (fNode accum x) treeL
+
+-- we don't need an accumulator for the Tree
+foldBTreeCorrection :: (a -> b) -> (b -> a -> b -> b) -> BTree a -> b
+foldBTreeCorrection f g (Leaf x) = f x
+foldBTreeCorrection f g (Node l x r) = 
+    g (foldBTreeCorrection f g l) x (foldBTreeCorrection f g r)
 
 -- c)
 -- postOrder = let post x xss = concat xss ++ [x]
@@ -78,6 +85,12 @@ postOrder tree =
     foldBTree post post [] tree
     where
         post accum x = accum ++ [x]
+
+postOrderCorrection :: BTree a -> [a]
+postOrderCorrection t = foldBTreeCorrection f g t
+    where
+        f x = [x]
+        g subtreeL b subtreeR = subtreeL ++ subtreeR ++ [b]
 
 -- d)
 -- not optimized
@@ -92,6 +105,7 @@ isSearchTreeShow fOrder (Node treeL x treeR)  =
         maxL = foldBTree max max minBound treeL
         minR = foldBTree min min maxBound treeR
 
+-- inefficient since we recompute at each step
 isSearchTree :: (Bounded a, Ord a) => (a -> a -> Bool) -> BTree a -> Bool
 isSearchTree fOrder (Leaf x) = True
 isSearchTree fOrder (Node treeL x treeR)  =
@@ -100,6 +114,25 @@ isSearchTree fOrder (Node treeL x treeR)  =
     where
         maxL = foldBTree max max minBound treeL
         minR = foldBTree min min maxBound treeR
+
+-- 
+isSearchTreeCorrection :: (a -> a -> Bool) -> BTree a -> Bool
+isSearchTreeCorrection (less:: a -> a -> Bool) t = 
+    case interval t of
+        Nothing -> False
+        Just(_,_) -> True
+    where 
+        -- here, less is an ordering function (a -> a -> Bool)
+        interval :: BTree a -> Maybe (a,a)
+        interval t = foldBTreeCorrection f g t
+
+        f x = Just (x, x)
+
+        g Nothing x _ = Nothing
+        g _ x Nothing = Nothing
+        g (Just(a,b)) x (Just(c,d))
+            | b `less` x && x `less` c = Just (a,d)
+            | otherwise  = Nothing
 
 
 myAssert :: Bool -> IO ()
