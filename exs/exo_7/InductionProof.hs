@@ -1,4 +1,4 @@
-module ListInduction where
+module InductionProof where
 --
 -- Haskell's type system can help to verify proofs in an automated fashion.
 -- By collecting the steps of a proof chain in a list, the type system ensures
@@ -31,13 +31,11 @@ proof :: (a -> b) -> [a] -> [a] -> [[b]]
 --
 -- Base case: xs = []
 --  f and ys are free variables in the claimed proposition.
---  xs is an empty list. (Note: xs@[] is a so-called "as-pattern"
---  where "[]" is the actual pattern but the variable "xs" is also
---  bound to the value []).
+--  xs is (cf. the where-declaration) an empty list.
 --  Between the proof steps we give comments explaining
 --  the respective step.
 --
-proof f xs@[] ys =
+proof f [] ys =
     [map f xs ++ map f ys
     , -- xs = []
     map f [] ++ map f ys
@@ -50,15 +48,15 @@ proof f xs@[] ys =
     , -- xs = []
     map f (xs++ys)
     ]
+    where
+      xs = []
 
 --
 -- Inductive case: xs = z : zs
 --  f, z, zs and ys are free variables in the claimed proposition.
---  xs is the list z:zs. (Again, we use an "as-pattern": "z:zs"
---  is the actual pattern but the variable "xs" also refers to "z:zs".)
+--  xs is (cf. the where-declaration) the list z:zs.
 --
-proof f xs@(z:zs) ys =
-    -- Induction Hypothesis: map f zs ++ map f ys == map f (zs ++ ys)
+proof f (z:zs) ys =
     [map f xs ++ map f ys
     , -- xs = z:zs
     map f (z:zs) ++ map f ys
@@ -75,6 +73,8 @@ proof f xs@(z:zs) ys =
     , -- xs = z:zs
     map f (xs++ys)
     ]
+    where
+      xs = z : zs
 
 
 tests :: [[[Integer]]]
@@ -96,41 +96,37 @@ tests =
 
 
 --
--- Subtask (a)
+-- Task 1 (a)
 --
 -- Prove that
---  length (map f xs) = length xs
--- holds for arbitrary but finite lists xs :: [a] and functions f :: a->b.
+--     foldr f e (xs++ys) = f (foldr f e xs) (foldr f e ys)
+-- holds for an arbitrary associative function f :: a->a->a with neutral
+-- element e :: a and arbitrary finite lists xs, ys :: [a].
 --
 
-proofa :: (a -> b) -> [a] -> [Int]
-proofa = undefined
-
+proof1a :: (a->a->a) -> a -> [a] -> [a] -> [a]
+proof1a = undefined
 
 --
--- Subtask (b)
+-- Task 1 (b)
+--
+data Tree a = Leaf a
+            | Fork (Tree a) (Tree a)
+              deriving (Eq, Show)
+
+height :: Tree a -> Integer
+height (Leaf _)     = 0                                -- height.1
+height (Fork t1 t2) = 1 + max (height t1) (height t2)  -- height.2
+
+nrForks :: Tree a -> Integer
+nrForks (Leaf _)     = 0                            -- nrForks.1
+nrForks (Fork t1 t2) = 1 + nrForks t1 + nrForks t2  -- nrForks.2
+
 --
 -- Prove that
---     length (xs ++ ys) = length xs + length ys
--- holds for arbitrary but finite lists xs, ys :: [a].
+--    nrForks t <= 2^(height t) - 1
+-- holds for all finite trees t :: Tree a.
 --
 
-proofb :: [a] -> [a] -> [Int]
-proofb = undefined
-
-
---
--- Subtask (c)
---
--- Prove that
---     length (powerlist xs) = 2^(length xs)
--- holds for arbitrary but finite lists xs :: [a].
---
-
-powerlist :: [a] -> [[a]]
-powerlist []       = [[]]                                       -- powerlist.1
-powerlist (x:xs) = map (x :) (powerlist xs) ++ powerlist xs     -- powerlist.2
-
-proofc :: [a] -> [Int]
-proofc = undefined
-
+proof1b :: Tree a -> [Integer]
+proof1b = undefined
