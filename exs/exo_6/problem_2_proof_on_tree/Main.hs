@@ -13,7 +13,8 @@ sumAcc (Leaf x)     y = x+y                             -- sumAcc.1
 sumAcc (Node l x r) y = sumAcc l (sumAcc r (x+y))       -- sumAcc.2
 
 
--- Proposition: sumT t + y = sumAcc t y
+-- Proposition: 
+-- forall t. (forall y. sumT t + y = sumAcc t y)
 
 -- Induction
 proof :: Tree -> Int -> [Int]
@@ -32,6 +33,13 @@ proof t@(Leaf x) y =
       ]
 -- ladder case
 -- Note: 2 recursive Tree in Tree def means 2 induction cases needed
+-- t = Node l x r, for any x::Int, l,r::Tree
+-- Induction cases:
+--    1. l = Leaf x, r = Leaf y
+--       forall y. sumT l + a = sumAcc l a
+--    2. l = Node l1 x1 r1, r = Leaf y
+--       forall y. sumT l + a = sumAcc l a
+-- NOTE: So here, we can for any y, since we are doing induction on t
 proof t@(Node l x r) y =
       [
             (sumT t) + y,
@@ -39,7 +47,7 @@ proof t@(Node l x r) y =
             (sumT (Node l x r)) + y,
             -- sumT.2
             (sumT l) + x + (sumT r) + y,
-            -- re arrange
+            -- re arrange (associativity and commutativity of addition)
             (sumT l) + ((sumT r) + (x + y)),
             -- induction case: sumT l + a = sumAcc l a
             sumAcc l ((sumT r) + (x + y)),

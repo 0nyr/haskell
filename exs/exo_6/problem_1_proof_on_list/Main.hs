@@ -23,6 +23,12 @@ module Main where
 --    map f (x:xs) = f x : map f xs      -- map.2
 --
 
+
+-- we can use Induction on Haskell lists since:
+-- [] is a list
+-- if x is an element and xs is a list, then x:xs is also a list
+
+
 --
 -- Induction proof for the above theorem using structural induction:
 --
@@ -106,7 +112,7 @@ proofa f xs@(z:zs) =
         length (f z: (map f zs)),
         -- length.2
         1 + length (map f zs),
-        -- induction case
+        -- induction case: length (map f zs) = length zs
         1 + length zs,
         -- length.2
         length (z:zs),
@@ -131,6 +137,8 @@ proofb xs@[] ys =
         -- xs = []
         length ([] ++ ys),
         -- (++).1
+        length ys,
+        -- math
         0 + length ys,
         -- length.1
         length [] + length ys,
@@ -147,7 +155,7 @@ proofb xs@(z:zs) ys =
         length (z: (zs ++ ys)),
         -- length.2
         1 + length (zs ++ ys),
-        -- induction case
+        -- induction case: length (zs ++ ys) = length zs + length ys
         1 + length zs + length ys,
         -- lenght.2
         length (z:zs) + length ys,
@@ -183,9 +191,17 @@ proofc xs@[] =
         -- length.1
         1 + 0,
         -- math
-        1
+        1,
+        -- math
+        2^0,
+        -- length.1
+        2^(length []),
+        -- xs = []
+        2^(length xs)
     ]
 -- ladder case
+-- xs = z:zs for z::a and zs::[a] ( z an element and zs a list)
+-- Induction case on list holds for zs: length (powerlist zs) = 2^(length zs)
 proofc xs@(z:zs) = 
     [
         length (powerlist xs),
@@ -199,7 +215,7 @@ proofc xs@(z:zs) =
         length (powerlist zs) + length (powerlist zs),
         -- math
         2*(length (powerlist zs)),
-        -- induction case
+        -- induction case: length (powerlist zs) = 2^(length zs)
         2*(2^(length zs)),
         -- math
         2^(length zs + 1),

@@ -40,6 +40,19 @@ preorder tree = foldTreeDefaultE pre "" tree '.'
     where
         pre accum c = c : accum
 
+preorderCorrection :: Tree -> String
+preorderCorrection E = "."
+preorderCorrection (N subtreeL c subtreeR) = 
+    c : (preorderCorrection subtreeL) ++ (preorderCorrection subtreeR)
+
+foldCorrection :: b -> (b -> Char -> b -> b) -> Tree -> b
+foldCorrection leaf _ E = leaf
+foldCorrection leaf f (N subtreeL c subtreeR) =
+    f (foldCorrection leaf f subtreeL) c (foldCorrection leaf f subtreeR)
+
+preorderCorrectionUsingFold :: Tree -> String
+preorderCorrectionUsingFold = foldCorrection "." (\l c r -> c : l ++ r)
+
 -- b)
 fromPreorder :: String -> Tree
 fromPreorder "" = E
