@@ -185,7 +185,9 @@ proof1b t@(Fork l r) =
                 (nrForks l) + (nrForks r) <= 2^(height l) - 1 + 2^(height r) - 1,
                 -- applying induction:
                 1 + (nrForks l) + (nrForks r) <= 2^(height l) + 2^(height r) - 1,
-                -- math
+                -- math:
+                --      a <= max a b (property on max)
+                --      c <= d => 2^c <= 2^d
                 2^(height l) + 2^(height r) - 1 <= 2^(max (height l) (height r)) + 2^(max (height l) (height r)) - 1,
                 -- math
                 2^(height l) + 2^(height r) - 1 <= 2*2^(max (height l) (height r)) - 1,
