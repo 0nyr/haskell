@@ -7,7 +7,17 @@ average :: [Double] -> Double
 average list = hom (/ fromIntegral (length list)) (+) 0 list
 
 
+rotate :: [a] -> [a]
+rotate [] = []
+rotate (x:xs) = xs ++ [x]
+-- Is rotate a list homomorphism?
+-- rotate (xs ++ ys) = rotate xs # rotate ys
+-- rotate [] = []
 
+-- rotate [1,2,3] = rotate [1,2] # rotate [3]
+-- rotate [1,2,3] = [2,1] # [3]
+
+[]
 
 -- Tests
 myAssert :: Bool -> IO ()
