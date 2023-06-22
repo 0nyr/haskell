@@ -14,6 +14,7 @@ mss = maximum . map sum . segments
       segments list = concat . map inits . tails list
 
 -- Is mss a list homomorphism?
+-- CORRECTION NOTE: THE FOLLOWING IS WRONG
 -- mss (xs ++ ys) = mss xs ? mss ys
 -- mss [] = 0 
 -- so has a neutral element
@@ -21,6 +22,29 @@ mss = maximum . map sum . segments
 -- mss = maximum . map sum . segments
 -- mss = foldr max 0 . map sum . segments
 -- so mss is a list homomorphism
+
+-- intuition that mss is NOT a list homomorphism
+-- if you have a list and you cut it in 2, 
+-- then apply the mss function on each part
+-- we don't get the same result as if we apply mss on the whole list
+--
+-- Proposition of proof:
+-- Proof by contradiction: Assume that mss is a list homomorphism
+-- Then, there exists an associative operator # with 
+-- a neutral element e such that:
+--    mss (xs ++ ys) = mss xs # mss ys
+--    mss [] = e
+--
+-- 4
+-- = mss [3, -2, 3] -- 3 + (-2) + 4 = 4: here the maximum segment sum is 4 considering the whole list
+-- mss [3] # mss [-2, 3]
+-- = 3 # 3
+-- = mss [3] # mss[3]
+-- = mss [3,3]
+-- = 6
+-- We can see a contradiction here
+-- So it means mss is not an homomorphism
+--
 
 -- b)
 e :: a -- neutral element
@@ -38,10 +62,19 @@ s = scanl g e
 -- s ([1,2] ++ [3,4]) = scanl g e [1,2] ? scanl g e [3,4]
 -- s ([1,2] ++ [3,4]) = [e, g e 1, g (g e 1) 2] ? [e, g e 3, g (g e 3) 4]
 
--- ? = xs ++ tail (scan g (last xs) ys)
+-- ? = xs ++ tail (scanl g (last xs) ys) WRONG
+-- ? = xs ++ map(\y -> last xs `g` y) (tail ys) CORRECTED VERSION
+--
+-- neutral element e = provided by definition
 
 -- s [1,2,3,4] = [e, g e 1, g (g e 1) 2, g (g (g e 1) 2) 3, g (g (g (g e 1) 2) 3) 4]
 -- so s is a list homomorphism
+
+
+-- correction
+--
+
+
 
 main :: IO ()
 main = do

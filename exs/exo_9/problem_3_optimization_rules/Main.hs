@@ -4,6 +4,18 @@ module Main where
 import Control.Monad
 import System.Environment
 
+# ❮onyr ★ kenzael❯ ❮problem_3_optimization_rules❯❯ time ./Main 
+# Running with n = 10
+# 6290431
+#
+# real    0m0.017s
+# user    0m0.001s
+# sys     0m0.006s
+
+-- $ is just function application
+-- it makes the code more readable
+-- negate $ negate 42 = negate (negate 42)
+
 --
 -- Data type "BTree a"
 --
@@ -53,9 +65,13 @@ bigComputation n =
 -- Put optimization rules here which eliminate
 -- the intermediate structures in 'bigComputation'.
 --
+-- For the second rule, remember that the map has to change the middle value
+-- contained by the Tree.
 {-# RULES
     "mapBTree/mapBTree" forall f g t.
     mapBTree f (mapBTree g t) = mapBTree (f . g) t
+    "mapBTree/foldBTree" forall l n f t. 
+    foldBTree l n (mapBTree f t) = foldBTree (l . f) (\x y z -> n x (f y) z) t
   #-}
 
 --

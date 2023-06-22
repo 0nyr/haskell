@@ -8,6 +8,24 @@ hom :: (a->b) -> (b->b->b) -> b -> [a] -> b
 hom f op e = foldr op e . map f
 -- h is a list hommorphism
 
+-- correction notes
+-- h :: [a] -> b is a list homomorphism
+-- by definition:
+--      there exists an associative operator # with
+--      a neutral element e such that:
+--      i) h (xs ++ ys) = h xs # h ys
+--      ii) h [] = e
+-- First homomorphism law:
+-- there exists a function f and an associative function op
+-- with neutral element e such that:
+--      h = foldr op e . map f
+-- Second and Third homomorphism law:
+-- there exists functions b, c and values k, l such that:
+--      h = foldr op e . map f
+--      h = foldl op e
+--      h  h (xs ++ ys) = h xs # h ys
+
+
 -- a)
 revertListH :: [a] -> [a]
 revertListH [] = []
@@ -57,6 +75,9 @@ twistH list =
             | (length acc) `mod` 2 == 0 = xs : acc
             | otherwise = head acc : xs : tail acc
 
+-- correction: we could have defined the operator as:
+us # vs = if even (length us) then us ++ vs
+            else init us ++ twist (last us : twist vs)
 
 -- b)
 transpose :: [[a]] -> [[a]]
