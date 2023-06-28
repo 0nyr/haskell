@@ -18,22 +18,39 @@ applyPrim op xs
     (OEq ,[CBool a,CBool b]) -> CBool (a==b)
     _ -> error "illegal call to predefined operator"
 
---
+
 -- Perform a reduction step on the
 -- leftmost-outermost redex. Do not look inside
 -- a lambda expression. In other words, this
 -- function performs one reduction step towards
 -- weak head normal form (WHNF). When the given
 -- expression is already in WHNF, return Nothing.
---
+
+-- TODO: not working, need debugging
 red_Redex_LMHead :: LExp -> Maybe LExp
 red_Redex_LMHead = r
-    where
-      r (V _)         = Nothing
-      r (Prim op xs)  = case red_Redex_LMHead_Sequence xs of
-                          Nothing -> Just (applyPrim op xs)
-                          Just ys -> Just (Prim op ys)
-      r _ = error "please implement"
+  where
+    r :: LExp -> Maybe LExp
+    r (V _) = Nothing
+    r (CInt _) = Nothing
+    r (CBool _) = Nothing
+    r (Prim op xs)  = case red_Redex_LMHead_Sequence xs of
+                        Nothing -> Just (applyPrim op xs)
+                        Just ys -> Just (Prim op ys)
+    r (L x e) = Nothing
+    r (Y e) = r e
+    r (If c t e) = case r c of
+                     Nothing -> case c of
+                                  CBool True -> Just t
+                                  CBool False -> Just e
+                                  _ -> Nothing
+                     Just c' -> Just (If c' t e)
+    r (f :@: x) = case r f of
+                    Nothing -> case f of
+                                 L x' e -> Just (substitute x' x e)
+                                 _ -> fmap (f :@:) (r x)
+                    Just f' -> Just (f' :@: x)
+
 
 --
 -- Reduces the first expression in a list of
