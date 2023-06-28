@@ -1,5 +1,8 @@
 module Main where
---
+
+-- let x = putStr "abc" -- remember that x is not a value, but a computation
+-- calling "do {x; x; x}" will output "abcabcabc"
+
 -- To run this program you have the following options:
 --  (1) You can load it into GHCi as usual and start it with ":main"
 --  (2) Interpret it directly by calling "runhaskell GuessMyNumber.hs" on the
@@ -34,7 +37,18 @@ userInputCheck secret = do
                     }
                         
 
-
+-- correction
+game :: Int -> Int -> IO ()
+game secret nTry = do
+    putStr ("Try #" ++ show nTry ++ ": ")
+    input <- readInput
+    let guess = read line :: Int
+    case guess `compare` secret of
+        LT -> putStrLn "Too low!" 
+            >> game secret (nTry + 1)
+        GT -> putStrLn "Too high!"
+            >> game secret (nTry + 1)
+        EQ -> putStrLn "You win!"
     
 
 main :: IO ()

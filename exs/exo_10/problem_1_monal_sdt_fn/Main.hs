@@ -25,9 +25,28 @@ mapMonadDo f list = do
     y <- list
     return (f y)
 
+-- correction
+mapMCorr :: Monad m => (t -> b) -> m t -> m b
+mapMCorr f xs = xs >>= (\x -> return (f x))
+
+mapMCorrDo :: Monad m => (t -> b) -> m t -> m b
+mapMCorrDo f xs = do { x <- xs ; return (f x)}
+
+mapMCorr2 :: Monad m => (a -> m b) -> m a -> m b
+mapMCorr2 f xs = xs >>= f
+
 -- c)
 filterMonad :: (a -> Bool) -> [a] -> [a]
 filterMonad f list = list >>= (\y -> if f y then return y else [])
+
+-- correction
+-- basic monads are not guaranteed to have a zero element
+-- so we need to use MonadPlus 
+filterMonadPlus :: MonadPlus m => (a -> Bool) -> m a -> m a
+filterMonadPlus f xs = do
+    x <- xs
+    if f x then return x else mzero
+
 
 filterMonadDo :: (a -> Bool) -> [a] -> [a]
 filterMonadDo f list = do
