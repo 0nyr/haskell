@@ -22,6 +22,9 @@ mss = maximum . map sum . segments
 -- mss = maximum . map sum . segments
 -- mss = foldr max 0 . map sum . segments
 -- so mss is a list homomorphism
+--
+-- FEEDBACK: Just a neutral element is not enough; see tutorial for how to
+-- construct a contradiction.
 
 -- intuition that mss is NOT a list homomorphism
 -- if you have a list and you cut it in 2, 
@@ -61,6 +64,9 @@ s = scanl g e
 -- s (xs ++ ys) = scanl g e xs ? scanl g e ys
 -- s ([1,2] ++ [3,4]) = scanl g e [1,2] ? scanl g e [3,4]
 -- s ([1,2] ++ [3,4]) = [e, g e 1, g (g e 1) 2] ? [e, g e 3, g (g e 3) 4]
+
+-- FEEDBACK: It should read "map" instead of "scan", then the operator
+-- does what is needed to satify  s (xs ++ ys) = s xs ? s ys .
 
 -- ? = xs ++ tail (scanl g (last xs) ys) WRONG
 -- ? = xs ++ map(\y -> last xs `g` y) (tail ys) CORRECTED VERSION

@@ -24,7 +24,7 @@ data BTree a = Leaf a                        -- leaf
                deriving (Eq, Show)
 
 --
--- Produce a tree with 2^n leaves.
+--a Produce a tree with 2^n leaves.
 --
 bigTree :: Integer -> BTree Integer
 bigTree n = btHelp 1 n
@@ -73,6 +73,8 @@ bigComputation n =
     "mapBTree/foldBTree" forall l n f t. 
     foldBTree l n (mapBTree f t) = foldBTree (l . f) (\x y z -> n x (f y) z) t
   #-}
+-- FEEDBACK: the mapBTree/mapBTree rule is correct!
+-- See tutorial for a foldBTree/mapBTree rule.
 
 --
 -- Functions involved in optimization rules should not be inlined

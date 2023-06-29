@@ -49,7 +49,13 @@ revertListH list =
 --             | (length acc) `div` 2 == 1 = head acc : xs : tail acc
 --             | otherwise = xs : acc
 
-
+--
+-- FEEDBACK:
+-- To show that twist is a homomorphism, the function should be defined
+-- by "hom" for all inputs (i.e., no special cases for [] and [x]). In addition,
+-- the definition only works for input lists of even length, see tutorial for
+-- an operator that works for all cases.
+-- 
 -- WARN: the `div` operator is the integer division, it rounds the result
 twistHShow :: Show a => [a] -> [a]
 twistHShow [] = []
@@ -91,6 +97,11 @@ opTransposeH (xHeadSublist:xss) [] = xHeadSublist : opTransposeH xss []
 opTransposeH [] (yHeadSublist:yss) = yHeadSublist : opTransposeH [] yss
 opTransposeH (xHeadSublist:xss) (yHeadSublist:yss) = (xHeadSublist ++ yHeadSublist) : opTransposeH xss yss
 
+-- FEEDBACK:
+-- Almost! [] should not be a special case and
+-- the neutral element of "opTransposeH" is [], not [[]].
+-- (With [] as the third argument of "hom", the case
+-- transposeH [] also works without the special case.)
 transposeH :: [[a]] -> [[a]]
 transposeH [] = []
 transposeH listOflist = hom f opTransposeH [[]] listOflist
