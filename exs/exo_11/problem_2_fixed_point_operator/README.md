@@ -16,11 +16,15 @@ Z =per_definition= (λz x . x (z z x)) (λz x . x (z z x))
 
 So:
 
-<p> Z = (λz x . x (z z x)) (λz x . x (z z x))
+<p> Z f = V V f = (λz x . x (z z x)) V f = (λz. (λx. x (z z x))) f
 
-<p> 
+<p> →β (λx. x (z z x)) [z := V] f </p>
 
+<p> <u>(λx. x (V V x)) f</u> </p>
 
+<p> →β (x (V V x)) [x := f] </p>
 
+<p> = f (V V f) = f (Z f)
 
+Proof done.
 

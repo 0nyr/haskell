@@ -15,7 +15,7 @@ An application (λx . E ) A is evaluated (i.e., a β-reduction is performed) by 
 
 * application of a predeﬁned function (not part of the minimal λ-calculus)
 
-RedEx = Reducible Expression
+RedEx = Reducible Expression (of the form `(λx. ...) (input)`)
 
 ##### name collision in substitution
 
@@ -35,11 +35,11 @@ To avoid this, we must rename the `y` inside the inner abstraction before we per
 
 > In Markdown, there is no underline. Need to use HTML.
 
-<p> <u>(λf . f (x +1)) (λx . 2·x )</u> (whole expression, normal order operation </p>
+<p> <u>(λf . f (x +1)) (λx . 2·x )</u> (whole expression, normal order operation) </p>
 
 <p> →β f (x +1) [f := (λx . 2·x )] </p>
 
-<p>= <u>(λx . 2·x )(x + 1)</u></p>
+<p>= <u>(λx . 2·x )(x + 1)</u> (Redex can still be reduced)</p>
 
 <p>→β 2·x [x := (x + 1) ]</p>
 
@@ -49,11 +49,13 @@ To avoid this, we must rename the `y` inside the inner abstraction before we per
 
 ### (λy. (λx . x ·y) (y + 1)) x
 
-<p><u>(λy. (λx . x·y) (y + 1)) x</u></p>
+> WARN: The following is wrong ! 
+
+<p><u>(λy. (λx . x·y) (y + 1)) x</u> (we could also have choosen "(λy. <u>(λx . x·y) (y + 1)</u>)) x" but we have prefered to use normal order operation (leftmost-outermost)</p>
 
 <p> →β (λx . x·y) (y + 1) [y := x] </p>
 
-<p> = <u>(λx . x·x) (x + 1)</u> </p>
+<p> = <u>(λx . x·x) (x + 1)</u> THIS IS WRONG, NAME COLLISION, x is free inside replacement would be confused with bound variable inside expression </p>
 
 <p> →β x·x [x := (x + 1)] </p>
 
@@ -61,7 +63,41 @@ To avoid this, we must rename the `y` inside the inner abstraction before we per
 
 <p> →δ x·x + 2·x + 1 </p>
 
+---
+
+Correction: outermost
+
+<p><u>(λy. (λx . x·y) (y + 1)) x</u></p>
+
+<p> →β (λx . x·y) (y + 1) [y := x] </p>
+
+<p> =α ((λz. z·y) (y + 1) [y := x] </p>
+
+<p> = <u>((λz. z·x) (x + 1)</u></p>
+
+<p> →β (z·x) [z := x + 1] </p>
+
+<p> = (x + 1)·x
+
+---
+
+Correction: innermost
+
+<p>(λy. <u>(λx . x·y) (y + 1)</u>)) x (we use inner-most operation order</p>
+
+<p> →β (λy. (x·y)[x := y + 1]) x </p>
+
+<p> = <u>(λy. (y+1)·y) x</u> </p>
+
+<p> →β (y+1)·y [y:=x] </p>
+
+<p> = (x+1)·x </p>
+
+<p> →δ x·x + 2·x + 1 </p>
+
 ### (λf . f f ) (λx . (λy. x )) (λz . z )
+
+> WARN: The following is wrong !
 
 <p> <u>(λf . f f ) (λx . (λy. x )) (λz . z )</u></p>
 
