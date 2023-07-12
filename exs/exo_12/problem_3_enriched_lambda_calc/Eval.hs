@@ -42,7 +42,7 @@ primop _ _ = error "illegal call to predefined operator"
 --
 eval :: LExp -> Env Domains -> Domains 
 eval (V x)     env = value env x 
-eval (CInt i)  _   = error "please implement"
+eval (CInt i)  _   = 
 eval (CBool b) _   = error "please implement"
 eval (f :@: x) env  = error "please implement"
 eval (L x v)   env  = error "please implement"
