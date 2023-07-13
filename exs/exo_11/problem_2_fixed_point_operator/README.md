@@ -6,6 +6,8 @@ Show (by performing the necessary β-reductions) that the λ-term Z = V V with V
 
 > Y was discovered Haskell B. Curry, Z by Alan Turing.
 
+![what is Y operator ?](./img/what_is_Y_operator.jpg)
+
 We want to prove that:
 Z f ↠β f (Z f )
 
@@ -27,4 +29,3 @@ So:
 <p> = f (V V f) = f (Z f)
 
 Proof done.
-

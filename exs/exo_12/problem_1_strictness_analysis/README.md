@@ -8,3 +8,7 @@ strict. Assume that the functions <, +, − are strict in all their arguments.
 ### (b) f (x,y,z) = y + (if x<0 then f (z,z,-x) else y+z)
 
 > see sheets...
+
+![sheet 1](./img/sheet_1_corr.jpg)
+
+![sheet 2](./img/sheet_2_corr.jpg)
