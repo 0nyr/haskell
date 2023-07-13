@@ -39,6 +39,11 @@ roundrobin xs = xs ++ roundrobin xs
 roundrobinFixedMem :: [a] -> [a]
 roundrobinFixedMem = cycle
 
+-- l = [1,2,3] ++ (l = [1,2,3] ++ (l = [1,2,3] ++ ...)
+roundrobinCursed :: [a] -> [a]
+roundrobinCursed xs = 
+    let l = xs ++ l
+    in l
 
 
 -- Tests

@@ -39,16 +39,26 @@ primop _ _ = error "illegal call to predefined operator"
 --
 -- Evaluation function
 -- Returns the value of a term in the given environment
---
+-- map a term to the domain
 eval :: LExp -> Env Domains -> Domains 
 eval (V x)     env = value env x 
-eval (CInt i)  _   = 
-eval (CBool b) _   = error "please implement"
-eval (f :@: x) env  = error "please implement"
-eval (L x v)   env  = error "please implement"
-eval (If c t e) env = error "please implement"
+eval (CInt i)  _   = I i -- construct a domain integer with the value i 
+eval (CBool b) _   = B b -- construct a domain boolean with the value b
+eval (f :@: x) env  = -- apply f to the evaluation of x in env
+    case eval f env of -- evaluate f in env
+        F f' -> f' (eval x env) -- if f is a function, apply it to the evaluation of x in env
+        _ -> error "left side of application must be a function"
+eval (L x v)   env  = -- addEnv is a king of "let" expression that binds x to v in env
+    F (\arg -> eval v (addEnv (x,arg) env)) -- return a function that takes an argument and evaluates v in the environment where x is bound to arg
+eval (If c t e) env = 
+    case eval c env of  -- evaluate the condition
+        B True -> eval t env -- if true, evaluate the then branch
+        B False -> eval e env -- if false, evaluate the else branch
+        _ -> error "condition in if-expression must be boolean"
 eval (Y f) env =
     -- evaluate f in env first, then apply y (see above)
     -- to the result
-    error "please implement"
+    case eval f env of
+        F g -> y g
+        _ -> error "right side of Y-expression must be a function"
 eval (Prim op xs) env = primop op [eval x env | x <- xs]
