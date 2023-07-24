@@ -194,3 +194,20 @@ operator = choice
     , reservedOp "-" *> return Sub
     , reservedOp "*" *> return Mul
     ]
+
+
+
+-- correction notes:
+pexpr :: Parser Expr
+pexpr =  parens expr
+
+aexpr :: Parser Expr
+aexpr = (
+    do reserved "Y"
+       e <- pexpr
+       return (Y e)
+    ) <|> try ( -- try: in case of parsing failure, pretend the parser didn't consume anything.
+    do e1 <- pexpr
+       e2 <- pexpr
+       return (App e1 e2)
+    ) <|> pexpr

@@ -27,7 +27,7 @@ averageCorrection xs =
 upLetterIfNeededAndLenCounter :: (Num a) => a -> Char -> (a, Char)
 upLetterIfNeededAndLenCounter counter charVal
     | isLower charVal = (counter + 1, toUpper charVal)
-    | otherwise = (counter + 1, charVal)
+    | otherwise = (counter, charVal)
 
 -- using mapAccumL :: (a->x->(a,y)) -> a -> [x] -> (a,[y])
 makeUpper :: String -> (Int, String)

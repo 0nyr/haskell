@@ -51,7 +51,7 @@ foldCorrection leaf f (N subtreeL c subtreeR) =
     f (foldCorrection leaf f subtreeL) c (foldCorrection leaf f subtreeR)
 
 preorderCorrectionUsingFold :: Tree -> String
-preorderCorrectionUsingFold = foldCorrection "." (\l c r -> c : l ++ r)
+preorderCorrectionUsingFold = foldCorrection "." (\left character right -> character : left ++ right)
 
 -- b)
 fromPreorder :: String -> Tree

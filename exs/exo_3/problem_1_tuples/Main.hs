@@ -31,13 +31,14 @@ ascendingSort3 a b c =
         (False, True, False) -> (b, c, a)
         (True, False, False) -> (c, a, b)
         (False, False, False) -> (c, b, a)
-    
+
+-- Correction: this is a kind of "manual" bubble sort
 ascendingSort3Correction :: Ord a => a -> a -> a -> (a, a, a)
 ascendingSort3Correction x y z =
     let (k, l) = ascendingSort2 x y -- use patern matching, or function snd (second)
-    in let (m, u) = ascendingSort2 l z -- determine max, u
-        in let (s, t) = ascendingSort2 k m -- determine min and intermediate value
-            in (s, t, u)
+    in let (m, maxVal) = ascendingSort2 l z -- determine max, u
+        in let (minVal, intermediateVal) = ascendingSort2 k m -- determine min and intermediate value
+            in (minVal, intermediateVal, maxVal)
 
 -- improved correction
 ascendingSort3Correction2 :: Ord a => a -> a -> a -> (a, a, a)
