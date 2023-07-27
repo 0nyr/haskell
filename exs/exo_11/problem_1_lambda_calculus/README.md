@@ -49,7 +49,7 @@ To avoid this, we must rename the `y` inside the inner abstraction before we per
 
 ### (λy. (λx . x ·y) (y + 1)) x
 
-> WARN: The following is wrong ! 
+> WARN: The following is wrong !
 
 <p><u>(λy. (λx . x·y) (y + 1)) x</u> (we could also have choosen "(λy. <u>(λx . x·y) (y + 1)</u>)) x" but we have prefered to use normal order operation (leftmost-outermost)</p>
 
@@ -71,7 +71,7 @@ Correction: outermost
 
 <p> →β (λx . x·y) (y + 1) [y := x] </p>
 
-<p> =α ((λz. z·y) (y + 1) [y := x] </p>
+<p> =α ((λz. z·y) (y + 1) [y := x] </p> Beware, collision between bounded and free variable in substitution, need to rename
 
 <p> = <u>((λz. z·x) (x + 1)</u></p>
 
@@ -111,11 +111,25 @@ Correction: innermost
 
 I'm not sure here if I should continue. But it seems to me that the strict application of normal order operation cannot be performed further since there is no more input.
 
-##### questions
+---
 
-> Q? I'm not sure here if the new x is the same as the old x... ? For now, I consider it is...
+Correction from teacher:
 
-**Answer:** λ-calculus with nameless (or de Bruijn) terms avoids any name collision issues.
+Redexes to be reduced are underlied;
+"->b" means beta reduction, "=a" is alpha conversion (renaming of bound variables).
 
-In the context of Haskell or other functional languages that follow lexical scoping rules, the `x` in the expression `(λf . f (x +1)) (λx . 2·x )` would be two different `x`s. The `x` in `f (x + 1)` would be a free variable and won't be replaced when we substitute `f` with `(λx . 2·x )`. I followed this interpretation for the first problem.
+Task 1 (c)
 
+(\f. f f) (\x. (\y. x)) (\z. z) 
+
+->b (f f) [f := (\x. (\y. x))] (\z. z) 
+
+= (\x. (\y. x)) (\x. (\y. x)) (\z. z) 
+
+->b (\y. x) [x := (\x. (\y. x))] (\z. z) 
+
+= (\y. (\x. (\y. x))) (\z. z) 
+
+->b (\x. (\y. x)) [y := (\z. z)] 
+
+= \x. (\y. x)

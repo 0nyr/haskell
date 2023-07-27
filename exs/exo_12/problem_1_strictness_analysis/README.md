@@ -12,3 +12,7 @@ strict. Assume that the functions <, +, − are strict in all their arguments.
 ![sheet 1](./img/sheet_1_corr.jpg)
 
 ![sheet 2](./img/sheet_2_corr.jpg)
+
+### Teacher correction
+
+![teacher's board](./img/correction_arg_strictness.jpg)
