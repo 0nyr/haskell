@@ -41,7 +41,7 @@ quicksort (x:xs) =  quicksort (filter (< x) xs)
 mergeSort :: Ord a => [a] -> [a]
 mergeSort [] = []
 mergeSort [x] = [x]
-mergeSort xs = merge (mergeSort firstHalf) (mergeSort secondHalf)
+mergeSort xs = merge (mergeSort firstHalf) (mergeSort secondHalf) -- create singletons and merge just after
     where
         half = length xs `div` 2
         (firstHalf, secondHalf) = splitAt half xs

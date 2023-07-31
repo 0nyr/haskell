@@ -8,7 +8,7 @@ concatM :: [[a]] -> [a]
 -- concatM [] = return []
 --concatM list = list >>= (\y -> return y)
 -- The following >>= is equivalent to `xs >>= f = concat (map f xs)`
--- so here we are just reusing the built-in bind operator of lists
+-- so here we are just reusing the built-in bind operator of lists 
 concatM listOfList = listOfList >>= id
 
 concatMDo :: [[a]] -> [a]
